@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>R34 Search</title>
   <meta name="robots" content="noindex, nofollow" />
-  <meta name="description" content="Unofficial client-side Rule34.xxx search. 18+ only." />
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>34</text></svg>" />
   <link rel="stylesheet" href="styles.css" />
 </head>
@@ -13,26 +12,24 @@
   <div id="age-gate">
     <div class="gate-card">
       <h1>18+ only</h1>
-      <p>This unofficial Rule34.xxx search client shows explicit adult content. You must be 18 or older to continue. Nothing is hosted here — results come from the official API using <strong>your</strong> credentials, stored only in this browser.</p>
+      <p>This unofficial Rule34.xxx search client shows explicit adult content. You must be 18 or older to continue. Nothing is hosted here. Results come from the official API using your credentials, stored only in this browser.</p>
       <div class="row">
         <button class="btn primary" id="enter">I am 18+</button>
         <button class="btn ghost" id="leave">Leave</button>
       </div>
     </div>
   </div>
-
   <header class="app hidden" id="app-header">
     <div class="wrap">
       <div class="top">
         <div class="brand">R34 Search</div>
         <form class="search-box" id="search-form" autocomplete="off">
-          <input id="q" type="search" placeholder="Search tags… e.g. 2girls score:>=20 -ai_generated" />
+          <input id="q" type="search" placeholder="Search tags, e.g. cat_ears score:>=20" enterkeyhint="search" />
           <div id="suggest" class="hidden"></div>
         </form>
-        <button class="btn" id="open-settings">API key</button>
+        <button class="btn" id="open-settings" type="button">API key</button>
       </div>
       <div class="toolbar">
-        <div id="chips"></div>
         <select id="rating">
           <option value="">Any rating</option>
           <option value="explicit">Explicit</option>
@@ -41,70 +38,63 @@
         </select>
         <select id="sort">
           <option value="">Newest</option>
-          <option value="sort:score">Score</option>
-          <option value="sort:id">ID</option>
+          <option value="sort:score:desc">Score</option>
+          <option value="sort:id:desc">ID</option>
         </select>
-        <label class="chip chip-toggle">
-          <input type="checkbox" id="no-ai" checked /> Exclude AI
-        </label>
+        <label class="chip chip-toggle"><input type="checkbox" id="no-ai" checked /> Exclude AI</label>
         <select id="limit">
-          <option value="24">24 / page</option>
-          <option value="42" selected>42 / page</option>
+          <option value="24" selected>24 / page</option>
+          <option value="42">42 / page</option>
           <option value="80">80 / page</option>
         </select>
         <span class="status" id="status"></span>
       </div>
     </div>
   </header>
-
   <main class="wrap hidden" id="app-main">
     <div id="need-key" class="need-key">
       <strong>API credentials required.</strong>
-      Rule34.xxx locked the public API in 2025. Create a free account, open
+      Rule34.xxx rejects searches without your own key. Open
       <a href="https://rule34.xxx/index.php?page=account&s=options" target="_blank" rel="noopener">Account Options</a>,
-      generate an API key, then paste User ID + API key via the <em>API key</em> button.
-      Credentials stay in localStorage on this device only.
+      generate a key, then paste it with the API key button. You can paste the whole api_key and user_id string into either field.
     </div>
     <div id="results"></div>
     <div class="pager hidden" id="pager">
-      <button class="btn" id="prev">Previous</button>
+      <button class="btn" id="prev" type="button">Previous</button>
       <span id="page-label">Page 1</span>
-      <button class="btn" id="next">Next</button>
+      <button class="btn" id="next" type="button">Next</button>
     </div>
   </main>
-
   <div id="settings" class="hidden">
     <div class="settings-card">
       <h2>API credentials</h2>
-      <p class="hint">Get these from <a href="https://rule34.xxx/index.php?page=account&s=options" target="_blank" rel="noopener">rule34.xxx account options</a>. Look for “API Access Credentials” and generate a key. Format is often <code>&api_key=…&user_id=…</code> — you can paste that whole string into either field.</p>
+      <p class="hint">Get these from <a href="https://rule34.xxx/index.php?page=account&s=options" target="_blank" rel="noopener">rule34.xxx account options</a>. Generate a key and save. Paste user id and api key, or the whole credential string.</p>
       <label for="user-id">User ID</label>
-      <input id="user-id" inputmode="numeric" placeholder="1234567" />
+      <input id="user-id" inputmode="numeric" placeholder="1234567" autocomplete="off" />
       <label for="api-key">API key</label>
-      <input id="api-key" type="password" placeholder="your key" />
-      <label for="blacklist">Always exclude tags (space-separated)</label>
+      <input id="api-key" type="password" placeholder="your key" autocomplete="off" />
+      <label for="blacklist">Always exclude tags</label>
       <input id="blacklist" placeholder="loli shota young child" />
-      <p class="hint">This client does not host, scrape, or cache Rule34 content. It is an unofficial frontend. Follow Rule34 API terms: no ads/paywalls on the client, don’t share or rotate multiple keys.</p>
+      <p class="hint">Keys stay in this browser only. This site does not host Rule34 files.</p>
       <div class="row actions">
-        <button class="btn primary" id="save-settings">Save</button>
-        <button class="btn ghost" id="close-settings">Close</button>
-        <button class="btn ghost" id="clear-settings">Forget keys</button>
+        <button class="btn primary" id="save-settings" type="button">Save</button>
+        <button class="btn ghost" id="close-settings" type="button">Close</button>
+        <button class="btn ghost" id="clear-settings" type="button">Forget keys</button>
       </div>
       <p class="hint ok hidden" id="saved-msg">Saved in this browser.</p>
     </div>
   </div>
-
   <div id="lightbox" class="hidden">
     <div class="stage" id="lb-stage"></div>
     <aside>
       <div class="row">
-        <button class="btn ghost" id="lb-close">Close</button>
+        <button class="btn ghost" id="lb-close" type="button">Close</button>
         <a class="btn" id="lb-open" target="_blank" rel="noopener">Open on Rule34</a>
       </div>
       <p id="lb-info"></p>
       <div class="tags" id="lb-tags"></div>
     </aside>
   </div>
-
   <script src="app.js"></script>
 </body>
 </html>
